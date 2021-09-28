@@ -56,3 +56,37 @@ str.length - и получить её длину)
 "Просмотрено довольно мало фильмов", если от 10 до 30 - "Вы классический зритель", а если больше - 
 "Вы киноман". А если не подошло ни к одному варианту - "Произошла ошибка"
 4) Потренироваться и переписать цикл еще двумя способами*/
+
+
+function calc(a, b) {
+	return (a + b);
+}
+
+console.log(calc(4, 5));
+console.log(calc(10, 15));
+console.log(calc(3, 7));
+
+
+
+function ret() {
+	let num = 50;
+	//
+	//
+	//
+	return num;
+}
+
+const anotherNum = ret();
+console.log(anotherNum);
+
+
+
+const logger = function () {
+	console.log('Hello');
+};
+
+logger();
+
+const logg = "My name is Nicolass";
+
+console.log(logg.slice(11, 19));
