@@ -1,127 +1,150 @@
 'use strict';
 
-// Передача по ссылке ( якщо міняється копія то міняється і головний обєкт, бо це ccылка)
+/* Задание на урок:
+1) У нас уже есть рабочее приложение, состоящее из отдельных функций. Представьте, что
+перед вами стоит задача переписать его так, чтобы все функции стали методами объекта personalMovieDB
+Такое случается в реальных продуктах при смене технологий или подхода к архитектуре программы
 
-// const obj = {
-// 	a: 5,
-// 	b: 1
-// };
+2) Создать метод toggleVisibleMyDB, который при вызове будет проверять свойство privat. Если оно false - он
+переключает его в true, если true - переключает в false. Протестировать вместе с showMyDB.
 
-// const copy = obj; // ссылка
-// copy.a = 10;
-
-// console.log(copy); // {a: 10, b: 1}
-// console.log(obj);  // {a: 10, b: 1}
-
-
-// 1) Клонирование обьекта с  помощью цыкла (поверхностная копия - якщо міняємо обєкт в обєкті,
-//    то робиться силочний тип данних)
-
-function copy(mainObj) {
-	const objCopy = {};
-
-	let key;
-	for (key in mainObj) {
-		objCopy[key] = mainObj[key];
-	}
-
-	return objCopy;
-}
-
-const numbers = {
-	a: 2,
-	b: 5,
-	c: {
-		x: 7,
-		y: 4
-	}
-};
-
-const newNumbers = copy(numbers);
-
-newNumbers.a = 10;
-// newNumbers.c.x = 10; // тоді міняється значення в копіїї обєкта і в головному обєкті
-
-console.log(newNumbers); // { a: 10, b: 5, c: { x: 7, y: 4 } }
-console.log(numbers); // { a: 2, b: 5, c: { x: 7, y: 4 } }
+3) В методе writeYourGenres запретить пользователю нажать кнопку "отмена" или оставлять пустую строку. 
+Если он это сделал - возвращать его к этому же вопросу. После того, как все жанры введены - 
+при помощи метода forEach вывести в консоль сообщения в таком виде:
+"Любимый жанр #(номер по порядку, начиная с 1) - это (название из массива)"*/
 
 
+const personalMovieDB = {
+    count: 0,
+    movies: {},
+    actors: {},
+    genres: [],
+    privat: false,
+	 
 
-// 2) Поверхностная копия с помощью Object.assign(куди хочемо помістити, що хочемо помістити) - соединяет сразу  
-//    несколько обьектов
+ start: function () {
+		personalMovieDB.count = +prompt('Сколько фильмов вы уже посмотрели?', '');
 
-const add = {
-	d: 17,
-	e: 20
-};
+		while (personalMovieDB.count == '' || personalMovieDB.count == null || isNaN(personalMovieDB.count)) {
+			personalMovieDB.count = +prompt('Сколько фильмов вы уже посмотрели?', '');
+		}
+	},
 
-const log = {
-	f: 30,
-	j: 22,
-	k: {
-		x: 5,
-		y: 3
-	}
-};
+	rememberMyFilms: function() {
+		for (let i = 0; i < 2; i++) {
+			const a = prompt('Один из последних просмотренных фильмов?', ''),
+					b = prompt('На сколько оцените его?', '');
+		
+			if (a != null && b != null && a != '' && b != '' && a.length < 50) {
+					personalMovieDB.movies[a] = b;
+					console.log('done');
+			} else {
+					console.log('error');
+					i--;
+			}
+		}
+	},
 
-console.log(Object.assign(log, add)); // { f: 30, j: 22, k: { x: 5, y: 3 }, d: 17, e: 20 }
+	detectPersonalLevel: function() {
+		if (personalMovieDB.count < 10) {
+			console.log("Просмотрено довольно мало фильмов");
+		} else if (personalMovieDB.count >= 10 && personalMovieDB.count < 30) {
+			console.log("Вы классический зритель");
+		} else if (personalMovieDB.count >= 30) {
+			console.log("Вы киноман");
+		} else {
+			console.log("Произошла ошибка");
+		}
+	},
 
-const clone = Object.assign({}, add);
+	showMyDB: function(hidden) {
+		if (!hidden) {
+			console.log(personalMovieDB);
+		}
+	},
 
-clone.d = 20;
-
-console.log(add); // { d: 17, e: 20 }
-console.log(clone); // { d: 20, e: 20 }
-
-
-
-// 3) Поверхностная копия масива .slice
-
-const oldArray = ['a', 'b', 'c'];
-const newArray = oldArray.slice();
-
-newArray[1] = 'aaa';
-
-console.log(newArray); // [ 'a', 'aaa', 'c' ]
-console.log(oldArray); // [ 'a', 'b', 'c' ]
-
-
-// 4) Поверхностная копия , ...Spread оператор - развaрачивает структуру
-
-const video = ['youtube', 'vimeo', 'rutube'],
-	blogs = ['wordpress', 'livejournal', 'blogger'],
-	internet = [...video, ...blogs, 'vk', 'facebook']; //поміщає все з (video) і (blogs)в (internet) і додає решту
-console.log(internet);
+	toggleVisibleMyDB: function() {
+		if (personalMovieDB.privat) {
+			personalMovieDB.privat = false;
+		} else {
+			personalMovieDB.privat = true;
+		}
+	},
 
 
-// ще один приклад як працюэ Spread оператор
+	writeYourGenres: function () {
+		for (let i = 1; i <= 3; i++) {
+			let genre = prompt(`Ваш любимый жанр под номером ${i}`);
+
+			if (genre == '' || genre == null) {
+				console.log('Sorry');
+				i--;
+			} else {
+				personalMovieDB.genres[i - 1] = genre;
+			}
+			
+		}
+
+		personalMovieDB.genres.forEach((item, i) => {
+			console.log(`Любимый жанр ${i + 1} - это ${item}`);
+		});
+	},
+
+	// let i[i - 1] = prompt(`Ваш любимый жанр под номером ${i}`);
+	// personalMovieDb.genres = i;
+	// while ( i != null || i != '') { et i[i - 1] = prompt(`Ваш любимый жанр под номером ${i}`); }
+
 	
-function pup (a, b, c) {
-	console.log(a);
-	console.log(b);
-	console.log(c);
-}
-
-const num = [2, 5, 7];
-
-pup(...num); // тут Spread оператор розгортає масив num і робить три окремих значення які підставляють в функцію як
-// а це 2, b це 5, с це 7
-
-
-// 4) Способ поверхностных копий обьектов Spread оператор для копий обьектов
-
-const arr = ['a', 'b'];
-
-const newArr = [...arr]; // працює так само як вприкладі вище
-
-// копия обьекта (працюэ так само як в масивах) 
-
-const obj = {
-	one: 1,
-	two: 2
 };
 
-const newObj = { ...obj };
+// personalMovieDB.start();
+// personalMovieDB.rememberMyFilms();
+// personalMovieDB.detectPersonalLevel();
+// personalMovieDB.showMyDB(personalMovieDB.privat);
+// personalMovieDB.writeYourGenres();
 
-console.log(newObj);
+// personalMovieDB.toggleVisibleMyDB(personalMovieDB);
 
+
+
+
+// 2 задача
+
+// function toggleVisibleMyDB() {
+// 	if (personalMovieDB.privat) {
+// 		personalMovieDB.privat = true;
+// 		console.log('ok');
+// 	} else {
+// 		personalMovieDB.privat = false;
+// 		console.log('no');
+// 	}
+// }
+
+// toggleVisibleMyDB: function () {
+// 		switch (personalMovieDB.privat) {
+// 			case false:
+// 				personalMovieDB.privat = true;
+// 				break;
+// 			case true:
+// 				personalMovieDB.privat = false;
+// 				break;
+// 		}
+// 	}
+
+
+// 3 задача
+
+// writeYourGenres: function () {
+// 		for (let i = 1; i <= 3; i++) {
+// 			personalMovieDB.genres[i - 1] = prompt(`Ваш любимый жанр под номером ${i}`);
+
+// 			while (personalMovieDB.genres != null || personalMovieDB.genres != '') {
+// 			 	personalMovieDB.genres[i - 1] = prompt(`Ваш любимый жанр под номером ${i}`);
+// 			}
+// 		}
+		
+// 	},
+
+	// let i[i - 1] = prompt(`Ваш любимый жанр под номером ${i}`);
+	// personalMovieDb.genres = i;
+	// while ( i != null || i != '') { et i[i - 1] = prompt(`Ваш любимый жанр под номером ${i}`); }
